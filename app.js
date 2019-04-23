@@ -1,5 +1,7 @@
+// NOTE: use this as Global variable
+WebSocket = require('ws');
+
 const Paho = require('paho-mqtt');
-global.WebSocket = require('ws');
 
 // Create a client instance
 var port = 32051;
@@ -21,8 +23,10 @@ var options = {
     onSuccess: onConnect,
     onFailure: doFail
 };
+
 // connect the client
 client.connect(options);
+
 // called when the client connects
 function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
@@ -31,17 +35,21 @@ function onConnect() {
     // Keep alive the channel
     keepAlive('KA');
 }
+
 function doFail(e){
     console.log(e);
 }
+
 function keepAlive(message) {
     setInterval(function(){ send(message); }, 9500);
 }
+
 function send(_message) {
     var message = new Paho.Message(_message);
     message.destinationName = topic;
     client.send(message);
 }
+
 // called when the client loses its connection
 function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
@@ -49,11 +57,13 @@ function onConnectionLost(responseObject) {
         write(responseObject.errorMessage);
     }
 }
+
 // called when a message arrives
 function onMessageArrived(message) {
     console.log("onMessageArrived:" + message.payloadString);
     write(message.payloadString);
 }
+
 function write(message) {
     var d = new Date();
     var date = d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
